@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+# This script is a convenience installer to be used in the Pythonista3 iOS app
+
 from functools import partial
 import os
 import requests
@@ -10,7 +12,7 @@ URL = "https://github.com/dani-jozsef/pysh/archive/refs/heads/main.zip"
 DOWNLOADTO = "Documents/pysh-main.zip"
 TEMPDIR = "Documents/_tmp_pysh_main"
 PACKAGEDIR = "pysh-main"
-INSTALLDIR = "Documents/pysh"
+INSTALLDIR = "Documents/site-packages/pysh"
 
 def _get_internal(url, dst):
   with requests.get(url, stream=True) as r:
