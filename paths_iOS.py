@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 import os
 
 
@@ -12,5 +15,5 @@ class paths_iOS:
     os.environ['ICLOUD'] = paths_iOS.icloud
 
 
-# Maybe not too clean but nice
+# Maybe not too clean to do this here, but convenient :P
 paths_iOS.register_paths()

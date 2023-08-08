@@ -4,6 +4,14 @@ PySh (pronounced *'psssh'*) is a library of (vaguely) Unix shell-like calls for 
 
 It was developed first as meditative practice, and second because I wanted something like this to use in the Pythonista3 iOS app. The design philosophy is safety first, at the detriment of convenience, to avoid becoming a gigantic footcannon. The calls perform no overwrites or directory merges.
 
+## Installation in the Pythonista3 app
+
+A convenience installer is included. Execute the following command to install the `main` branch:
+
+```
+import requests as r; exec(r.get('https://raw.githubusercontent.com/dani-jozsef/pysh/main/getpysh.py').content)
+```
+
 ## Error management
 
 To keep it sweet and simple, batch operations will raise an exception after the first error encountered. The progress of files and directories processed are kept in the `last_processed` module-scoped variable, which is reset with each new call other than `ls`.
