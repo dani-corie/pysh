@@ -37,6 +37,20 @@ Lists all files matching a wildcard path.
 
 Setting `recursive=True` passes the same to `glob.glob`, allowing the wildcard `**` to mean subdirectories in any depth, and finding files by a name pattern anywhere within a directory tree.
 
+### get
+
+Gets a file from a URL and saves it to the provided location.
+
+* If the destination is an existing directory, the downloaded file will be saved with its filename intact.
+* If the destination does not point to an existing directory, the downloaded file will be saved under this name and path,
+
+### ln
+
+Creates symlinks for the source item(s). Note how it doesn't create hardlinks, and is roughly equivalent to `ln -s` - that's because hardlinks belong to the black arts.
+
+* If the destination is an existing directory, links to the source files are created inside it.
+* If the destination does not point to an existing directory, a link of the source is made with the new name and location. In this case, the source path must expand to a single file or directory.
+
 ### ls
 
 Lists the current working directory or a single directory specified by a path that is 
@@ -50,7 +64,7 @@ It's a shortcut to `os.mkdir` with path expansion.
 
 Moves or renames the source item(s).
 
-* If the destination is an existing directory, source items are mpved into it.
+* If the destination is an existing directory, source items are moved into it.
 * If the destination does not point to an existing directory, the source is renamed to this new name and location. In this case, the source path must expand to a single file or directory.
 
 Set `recursive=True` to allow directories to be processed. By default, an error is raised on encountering a directory.
@@ -64,3 +78,9 @@ Set `recursive=True` to allow directories to be processed. By default, an error 
 ### rmdir
 
 It's a shortcut to `os.rmdir` with path expansion.
+
+### unzip
+
+Extracts an archive using `shutil.unpack_archive` to a provided destination directory that will be created on the fly.
+
+Extracting multiple archives at once, or extracting into existing directories is not supported for footcannon reasons.
