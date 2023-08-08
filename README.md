@@ -53,8 +53,6 @@ Moves or renames the source item(s).
 * If the destination is an existing directory, source items are mpved into it.
 * If the destination does not point to an existing directory, the source is renamed to this new name and location. In this case, the source path must expand to a single file or directory.
 
-Set `recursive=True` to allow directories to be processed. By default, an error is raised on encountering a directory.
-
 ### rm
 
 Deletes items specified by a wildcard path.
