@@ -11,7 +11,8 @@ import shutil
 URL = "https://github.com/dani-jozsef/pysh/archive/refs/heads/main.zip"
 DOWNLOADTO = "Documents/pysh-main.zip"
 TEMPDIR = "Documents/_tmp_pysh_main"
-PACKAGEDIR = "pysh-main"
+PACKAGEDIR = "pysh-main/pysh"
+LICENSELOC = "pysh-main/LICENSE"
 INSTALLDIR = "Documents/site-packages/pysh"
 
 def _httpget_internal(url, dst):
@@ -28,12 +29,14 @@ def install(
     downloadto = DOWNLOADTO,
     tempdir = TEMPDIR,
     packagedir = PACKAGEDIR,
+    licenseloc = LICENSELOC,
     installdir = INSTALLDIR):
   
   homedir = os.environ['HOME']
   download_path = os.path.join(homedir, downloadto)
   expand_path = os.path.join(homedir, tempdir)
   package_path = os.path.join(expand_path, packagedir)
+  license_path = os.path.join(expand_path, licenseloc)
   install_path = os.path.join(homedir, installdir)
 
   if os.path.exists(download_path):
@@ -54,8 +57,8 @@ def install(
   print(" done..")
 
   print(f"Attempting to install to '{install_path}'")
-
   shutil.move(package_path, install_path)
+  shutil.move(license_path, install_path)
   print(" done!")
 
   print(f"Attempting to remove '{download_path}' and '{expand_path}'")
