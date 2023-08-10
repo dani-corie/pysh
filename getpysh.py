@@ -14,7 +14,7 @@ TEMPDIR = "Documents/_tmp_pysh_main"
 PACKAGEDIR = "pysh-main"
 INSTALLDIR = "Documents/site-packages/pysh"
 
-def _get_internal(url, dst):
+def _httpget_internal(url, dst):
   with requests.get(url, stream=True) as r:
     r.raw.read = partial(r.raw.read, decode_content=True)
     with open(dst, 'wb') as f:
@@ -46,7 +46,7 @@ def install(
     raise _alreadyexists(download_path)
 
   print(f"Attempting to download '{url}' to '{download_path}'")
-  _get_internal(url, download_path)
+  _httpget_internal(url, download_path)
   print(" done..")
   
   print(f"Attempting to unpack to '{expand_path}'")

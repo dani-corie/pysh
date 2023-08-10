@@ -45,7 +45,13 @@ Lists all files matching a wildcard path.
 
 Setting `recursive=True` passes the same to `glob.glob`, allowing the wildcard `**` to mean subdirectories in any depth, and finding files by a name pattern anywhere within a directory tree.
 
-### get
+### head
+
+Returns the first 256 bytes (or the amount given in the `bytes=` argument) of the file specified.
+
+Defaults to reading in binary mode, specifying `encoding=` opens the file in text mode, escaping encoding errors. The `bytes=` parameter is passed to the `read` call, so entering `bytes=-1` will read the whole file.
+
+### httpget
 
 Gets a file from a URL and saves it to the provided location.
 
@@ -54,7 +60,7 @@ Gets a file from a URL and saves it to the provided location.
 
 ### ln
 
-Creates symlinks for the source item(s). Note how it doesn't create hardlinks, and is roughly equivalent to `ln -s` - that's because hardlinks belong to the black arts.
+Creates symlinks for the source item(s). Note how it doesn't create hardlinks, and is roughly equivalent to `ln -s`, because hardlinks belong to the black arts.
 
 * If the destination is an existing directory, links to the source files are created inside it.
 * If the destination does not point to an existing directory, a link of the source is made with the new name and location. In this case, the source path must expand to a single file or directory.
@@ -66,7 +72,7 @@ Returns a tuple of `(directory path, [ ..directory content ])`
 
 ### mkdir
 
-It's a shortcut to `os.mkdir` with path expansion.
+It's a shortcut to `os.mkdir` with path expansion. Creates a directory at the given location.
 
 ### mv
 
@@ -74,6 +80,10 @@ Moves or renames the source item(s).
 
 * If the destination is an existing directory, source items are moved into it.
 * If the destination does not point to an existing directory, the source is renamed to this new name and location. In this case, the source path must expand to a single file or directory.
+
+### resolve
+
+Resolves a wildcard path to a single file or directory. If the path resolves to multiple files, the call raises a `ValueError`; if it matches no items, a `FileNotFoundError`
 
 ### rm
 
@@ -83,7 +93,17 @@ Set `recursive=True` to allow directories to be processed. By default, an error 
 
 ### rmdir
 
-It's a shortcut to `os.rmdir` with path expansion.
+It's a shortcut to `os.rmdir` with path expansion. Removes a directory if empty, raises an error otherwise.
+
+### tail
+
+Returns the last 256 bytes (or the amount given in the `bytes=` argument) of the file specified.
+
+Defaults to reading in binary mode, specifying `encoding=` converts the read bytes to a string, escaping encoding errors. The `bytes=` parameter allows for adjusting the amount of data to read.
+
+### touch
+
+A shortcut to `pathlib.Path.touch` with path expansion. Creates an empty file, or bumps the last modified date of an existing file.
 
 ### unzip
 

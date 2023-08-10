@@ -4,6 +4,7 @@
 from functools import partial
 from glob import glob
 import os
+import pathlib
 import requests
 import shutil
 
@@ -28,6 +29,10 @@ class _errorhelper:
   def notadir(path):
     return NotADirectoryError(f"Is not a directory: '{path}")
   
+  def notafile(path):
+    return ValueError(f"Is not a regular file: '{path}'")
+
+# Path resolution functions  
 
 def _expand(path):
   path = os.path.expandvars(path)
@@ -41,7 +46,7 @@ def find(path, recursive=False):
     raise _errorhelper.nosuchfile(path)
   return result
 
-def _find_single(path):
+def resolve(path):
   expanded_paths = find(path)
   if len(expanded_paths) > 1:
     raise _errorhelper.ambiguous(path)
@@ -49,22 +54,30 @@ def _find_single(path):
 
 def _expand_destination(dst):
   try:
-    dst_expanded = _find_single(dst)
+    dst_expanded = resolve(dst)
     return dst_expanded, True
   # I know this is an antipattern but can't be bothered to care here
   except FileNotFoundError:
     dst_loc, dst_name = os.path.split(dst)
-    dst_loc = _find_single(dst_loc)
+    dst_loc = resolve(dst_loc)
     if not os.path.isdir(dst_loc):
       raise _errorhelper.notadir(dst_loc)
     dst_expanded = os.path.join(dst_loc, dst_name)
     return dst_expanded, False
 
 def _resolvedir(path):
-  path = _find_single(path)
+  path = resolve(path)
   if not os.path.isdir(path):
     raise _errorhelper.notadir(path)
   return path
+
+def _resolvefile(path):
+  path = resolve(path)
+  if os.path.isdir(path):
+    raise _errorhelper.notafile(path)
+  return path
+
+# Directory manipulation
 
 def ls(path=None):
   if path is not None:
@@ -79,6 +92,26 @@ def cd(path=None):
   path = _resolvedir(path)
   os.chdir(path)
   return path
+
+def mkdir(path):
+  global last_processed
+  last_processed = []
+  dst, exists = _expand_destination(path)
+  if exists:
+    raise _errorhelper.alreadyexists(dst)
+  os.mkdir(dst)
+  last_processed.append(dst)
+  return last_processed
+
+def rmdir(path):
+  global last_processed
+  last_processed = []
+  path = resolve(path)
+  os.rmdir(path)
+  last_processed.append(path)
+  return last_processed
+
+# Copy, move, delete, etc.
 
 def _cpmv_internal(src, dst, recursive, fn):
   global last_processed
@@ -98,7 +131,7 @@ def _cpmv_internal(src, dst, recursive, fn):
   else:
     # New name provided
     # Single source file or directory will be copied or moved
-    src_file = _find_single(src)
+    src_file = resolve(src)
     fn(src_file, dst, recursive)
   return last_processed
 
@@ -144,17 +177,6 @@ def _ln_single(target, link, _):
 def ln(target, link):
   return _cpmv_internal(target, link, None, _ln_single)
 
-def unzip(zipfile, dst):
-  global last_processed
-  last_processed = []
-  zipfile = _find_single(zipfile)
-  dst, exists = _expand_destination(dst)
-  if exists:
-    raise _errorhelper.alreadyexists(dst)
-  shutil.unpack_archive(zipfile, dst)
-  last_processed.append(dst)
-  return last_processed  
-
 def _rm_single(path, recursive):
   global last_processed
   if os.path.isdir(path):
@@ -174,31 +196,52 @@ def rm(path, recursive=False):
     _rm_single(file, recursive)
   return last_processed
 
-def mkdir(path):
+# Utilities
+
+def _open_file_internal(path, encoding):
+  file = _resolvefile(path)
+  if encoding is not None:
+    return open(file, 'r', encoding=encoding, errors='backslashreplace')
+  else:
+    return open(file, 'rb')
+
+def head(path, bytes=256, encoding=None):
+  with _open_file_internal(path, encoding) as f:
+    return f.read(bytes)
+
+def tail(path, bytes=256, encoding=None):
+  # Seeking doesn't work properly in text mode
+  with _open_file_internal(path, None) as f:
+    if (bytes >= 0):
+      f.seek(-bytes, os.SEEK_END)
+    data = f.read(bytes)
+    if encoding is None:
+      return data
+    # Instead we decode in memory
+    return str(data, encoding=encoding, errors='backslashreplace')
+
+def touch(path):
+  file, _ = _expand_destination(path)
+  pathlib.Path(file).touch()
+
+def unzip(zipfile, dst):
   global last_processed
   last_processed = []
-  dst, exists = _expand_destination(path)
+  zipfile = _resolvefile(zipfile)
+  dst, exists = _expand_destination(dst)
   if exists:
     raise _errorhelper.alreadyexists(dst)
-  os.mkdir(dst)
+  shutil.unpack_archive(zipfile, dst)
   last_processed.append(dst)
-  return last_processed
+  return last_processed  
 
-def rmdir(path):
-  global last_processed
-  last_processed = []
-  path = _find_single(path)
-  os.rmdir(path)
-  last_processed.append(path)
-  return last_processed
-
-def _get_internal(url, dst):
+def _httpget_internal(url, dst):
   with requests.get(url, stream=True) as r:
     r.raw.read = partial(r.raw.read, decode_content=True)
     with open(dst, 'wb') as f:
       shutil.copyfileobj(r.raw, f)
 
-def get(url, dst):
+def httpget(url, dst):
   global last_processed
   last_processed = []
   dst, exists = _expand_destination(dst)
@@ -207,6 +250,6 @@ def get(url, dst):
       raise _errorhelper.alreadyexists(dst)
     local_filename = url.split('/')[-1]
     dst = os.path.join(dst, local_filename)
-  _get_internal(url, dst)
+  _httpget_internal(url, dst)
   last_processed.append(dst)
   return last_processed
