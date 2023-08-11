@@ -63,7 +63,7 @@ def install(
 
   print(f"Attempting to remove '{download_path}' and '{expand_path}'")
   os.remove(download_path)
-  shutil.rm(expand_path, recursive=True)
+  shutil.rmtree(expand_path)
   print(" done..")
 
   print("Bye! <3")
