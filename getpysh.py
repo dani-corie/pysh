@@ -12,7 +12,7 @@ URL = "https://github.com/dani-jozsef/pysh/archive/refs/heads/main.zip"
 DOWNLOADTO = "Documents/pysh-main.zip"
 TEMPDIR = "Documents/_tmp_pysh_main"
 PACKAGEDIR = "pysh-main/pysh"
-LICENSELOC = "pysh-main/LICENSE"
+ADDITIONAL_FILES = [ "pysh-main/LICENSE" ]
 INSTALLDIR = "Documents/site-packages/pysh"
 
 ##
