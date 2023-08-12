@@ -15,6 +15,13 @@ PACKAGEDIR = "pysh-main/pysh"
 LICENSELOC = "pysh-main/LICENSE"
 INSTALLDIR = "Documents/site-packages/pysh"
 
+##
+
+def postinst(install_path):
+  pass
+
+##
+
 def _httpget_internal(url, dst):
   with requests.get(url, stream=True) as r:
     r.raw.read = partial(r.raw.read, decode_content=True)
@@ -29,14 +36,13 @@ def install(
     downloadto = DOWNLOADTO,
     tempdir = TEMPDIR,
     packagedir = PACKAGEDIR,
-    licenseloc = LICENSELOC,
+    additional_files = ADDITIONAL_FILES,
     installdir = INSTALLDIR):
   
   homedir = os.environ['HOME']
   download_path = os.path.join(homedir, downloadto)
   expand_path = os.path.join(homedir, tempdir)
   package_path = os.path.join(expand_path, packagedir)
-  license_path = os.path.join(expand_path, licenseloc)
   install_path = os.path.join(homedir, installdir)
 
   if os.path.exists(download_path):
@@ -58,13 +64,18 @@ def install(
 
   print(f"Attempting to install to '{install_path}'")
   shutil.move(package_path, install_path)
-  shutil.move(license_path, install_path)
+  for file in additional_files:
+    file_path = os.path.join(expand_path, file)
+    shutil.move(file_path, install_path)
   print(" done!")
 
   print(f"Attempting to remove '{download_path}' and '{expand_path}'")
   os.remove(download_path)
   shutil.rmtree(expand_path)
   print(" done..")
+
+  print("Running post-install script..")
+  postinst(install_path)
 
   print("Bye! <3")
 
