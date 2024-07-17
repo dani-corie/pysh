@@ -9,7 +9,7 @@ It was developed first as meditative practice, and second because I wanted somet
 A convenience installer is included. Execute the following command to install the `main` branch:
 
 ```
-import requests as r; exec(r.get('https://raw.githubusercontent.com/dani-jozsef/pysh/main/getpysh.py').content)
+import requests as r; exec(r.get('https://raw.githubusercontent.com/dani-corie/pysh/main/getpysh.py').content)
 ```
 
 ## Error management
