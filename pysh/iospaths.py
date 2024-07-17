@@ -6,18 +6,10 @@
 
 import os
 
+LOCAL = os.path.join(os.environ['HOME'], 'Documents')
+ICLOUD = '/private/var/mobile/Library/Mobile Documents/iCloud~com~omz-software~Pythonista3/Documents'
+SITEPKG = os.path.join(os.environ['HOME'], 'Documents/site-packages')
 
-class iOS_paths:
-
-  local = os.path.join(os.environ['HOME'], 'Documents')
-  icloud = '/private/var/mobile/Library/Mobile Documents/iCloud~com~omz-software~Pythonista3/Documents'
-  sitepkg = os.path.join(os.environ['HOME'], 'Documents/site-packages')
-
-  def register_paths():
-    os.environ['LOCAL'] = iOS_paths.local
-    os.environ['ICLOUD'] = iOS_paths.icloud
-    os.environ['SITEPKG'] = iOS_paths.sitepkg
-
-
-# Maybe not too clean to do this here, but convenient :P
-iOS_paths.register_paths()
+os.environ['LOCAL'] = LOCAL
+os.environ['ICLOUD'] = ICLOUD
+os.environ['SITEPKG'] = SITEPKG
