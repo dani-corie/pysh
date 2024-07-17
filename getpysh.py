@@ -52,7 +52,7 @@ def install(
     raise _alreadyexists(expand_path)
 
   if os.path.exists(install_path):
-    raise _alreadyexists(download_path)
+    raise _alreadyexists(install_path)
 
   print(f"Attempting to download '{url}' to '{download_path}'")
   _httpget_internal(url, download_path)
