@@ -8,7 +8,7 @@ import os
 import requests
 import shutil
 
-URL = "https://github.com/dani-jozsef/pysh/archive/refs/heads/main.zip"
+URL = "https://github.com/0xDA41/pysh/archive/refs/heads/main.zip"
 DOWNLOADTO = "Documents/pysh-main.zip"
 TEMPDIR = "Documents/_tmp_pysh_main"
 PACKAGEDIR = "pysh-main/pysh"
